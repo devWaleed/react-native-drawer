@@ -23,6 +23,7 @@ export default class Drawer extends Component {
 	_panStartTime = 0;
 	_syncAfterUpdate = false;
 	_interactionHandle = null;
+	_isComponentMounted = false;
 
 	static tweenPresets = {
 		parallax: (ratio, side = 'left') => {
@@ -126,16 +127,19 @@ export default class Drawer extends Component {
 		this.initialize(this.props);
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if (this.requiresResync(nextProps)) this.resync(null, nextProps);
-
-		if (nextProps.open !== null && this._open !== nextProps.open) {
-			this._syncAfterUpdate = true;
-			this._open = nextProps.open;
-		}
+	componentDidMount() {
+		this._isComponentMounted = true;
 	}
 
 	componentDidUpdate() {
+
+		if (this.requiresResync(this.props)) this.resync(null, this.props);
+
+		if (this.props.open !== null && this._open !== this.props.open) {
+			this._syncAfterUpdate = true;
+			this._open = this.props.open;
+		}
+
 		if (this._syncAfterUpdate) {
 			this._syncAfterUpdate = false;
 			this._open ? this.open('force') : this.close('force');
@@ -488,7 +492,9 @@ export default class Drawer extends Component {
 		props = props || this.props;
 		this._offsetClosed = this.getClosedOffset(props, viewport);
 		this._offsetOpen = this.getOpenOffset(props, viewport);
-		this.setState({ viewport });
+
+		if (this._isComponentMounted)
+			this.setState({ viewport });
 	};
 
 	requiresResync = (nextProps) => {
