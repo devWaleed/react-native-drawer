@@ -117,8 +117,9 @@ export default class Drawer extends Component {
 		this._childDrawer = drawer;
 	}
 
-	componentDidMount() {
-		if (this.context.drawer) this.context.drawer._registerChildDrawer(this);
+	constructor(props) {
+		super(props);
+		if (this.context?.drawer) this.context?.drawer._registerChildDrawer(this);
 		if (this.props.openDrawerThreshold && process.env.NODE_ENV !== 'production') console.error('react-native-drawer: openDrawerThreshold is obsolete. Use panThreshold instead.');
 		if (this.props.panStartCompensation && process.env.NODE_ENV !== 'production') console.error('react-native-drawer: panStartCompensation is deprecated.');
 		if (this.props.relativeDrag && process.env.NODE_ENV !== 'production') console.error('react-native-drawer: relativeDrag is deprecated.');
